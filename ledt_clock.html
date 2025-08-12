@@ -1,0 +1,178 @@
+<!DOCTYPE html>
+<html lang="da">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>LED Ring Digital Ur</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            background: #000000;
+            min-height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-family: 'Courier New', monospace;
+            overflow: hidden;
+        }
+
+        .clock-container {
+            position: relative;
+            width: 500px;
+            height: 500px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .seconds-ring {
+            position: absolute;
+            width: 100%;
+            height: 100%;
+            border-radius: 50%;
+            transform: rotate(-90deg);
+        }
+
+        .second-dot {
+            position: absolute;
+            width: 8px;
+            height: 8px;
+            border-radius: 50%;
+            background: #333333;
+            opacity: 0.3;
+            transition: all 0.1s ease;
+        }
+
+        .second-dot.active {
+            background: #ff0000;
+            /*box-shadow: 
+                0 0 15px #ff0000,
+                0 0 30px #ff0000,
+                0 0 45px #ff0000;*/
+            opacity: 1;
+        }
+
+        .digital-display {
+            position: absolute;
+            text-align: center;
+            z-index: 10;
+        }
+
+        .time-display {
+            font-size: 72px;
+            font-weight: bold;
+            color: #ff0000;
+            
+            letter-spacing: 4px;
+            font-family: 'DS-Digital', monospace;
+            margin-bottom: 20px;
+        }
+
+        .date-display {
+            font-size: 28px;
+            font-weight: bold;
+            color: #ff0000;
+            
+            letter-spacing: 2px;
+            font-family: 'DS-Digital', monospace;
+            opacity: 0.8;
+        }
+
+        /* Responsive design */
+        @media (max-width: 600px) {
+            .clock-container {
+                width: 350px;
+                height: 350px;
+            }
+            
+            .time-display {
+                font-size: 48px;
+                letter-spacing: 2px;
+            }
+            
+            .date-display {
+                font-size: 20px;
+            }
+            
+            .second-dot {
+                width: 6px;
+                height: 6px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="clock-container">
+        <!-- Seconds Ring -->
+        <div class="seconds-ring" id="secondsRing"></div>
+        
+        <!-- Digital Display -->
+        <div class="digital-display">
+            <div class="time-display" id="timeDisplay">00:00</div>
+            <div class="date-display" id="dateDisplay">01-01-2024</div>
+        </div>
+    </div>
+
+    <script>
+        function createSecondsRing() {
+            const secondsRing = document.getElementById('secondsRing');
+            const numDots = 60; // 60 dots for 60 seconds
+            
+            for (let i = 0; i < numDots; i++) {
+                const dot = document.createElement('div');
+                dot.className = 'second-dot';
+                dot.id = `second-${i}`;
+                
+                const angle = (i * 360 / numDots) * Math.PI / 180;
+                const radius = 240;
+                const x = Math.cos(angle) * radius + 250;
+                const y = Math.sin(angle) * radius + 250;
+                
+                dot.style.left = `${x - 4}px`;
+                dot.style.top = `${y - 4}px`;
+                
+                secondsRing.appendChild(dot);
+            }
+        }
+
+        function updateClock() {
+            const now = new Date();
+            const hours = now.getHours();
+            const minutes = now.getMinutes();
+            const seconds = now.getSeconds();
+            
+            // Update digital time
+            const timeString = `${hours.toString().padStart(2, '0')}:${minutes.toString().padStart(2, '0')}`;
+            document.getElementById('timeDisplay').textContent = timeString;
+            
+            // Update date
+            const dateString = now.toLocaleDateString('da-DK', {
+                day: '2-digit',
+                month: '2-digit',
+                year: 'numeric'
+            });
+            document.getElementById('dateDisplay').textContent = dateString;
+            
+            // Update seconds ring - light up dots based on current seconds
+            for (let i = 0; i < 60; i++) {
+                const dot = document.getElementById(`second-${i}`);
+                if (i <= seconds) {
+                    dot.classList.add('active');
+                } else {
+                    dot.classList.remove('active');
+                }
+            }
+        }
+
+        // Initialize
+        createSecondsRing();
+        updateClock();
+        setInterval(updateClock, 1000);
+    </script>
+</body>
+</html>
