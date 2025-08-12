@@ -1,0 +1,282 @@
+<!DOCTYPE html>
+<html lang="da">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Elegant Digital Ur</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            background: linear-gradient(135deg, #0c0c0c 0%, #1a1a1a 50%, #0c0c0c 100%);
+            min-height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-family: 'Arial', sans-serif;
+            overflow: hidden;
+        }
+
+        .clock-container {
+            position: relative;
+            width: 500px;
+            height: 500px;
+            background: radial-gradient(circle, rgba(30, 30, 30, 0.9) 0%, rgba(0, 0, 0, 0.95) 100%);
+            border-radius: 50%;
+            box-shadow: 0 0 100px rgba(255, 255, 255, 0.1), inset 0 0 50px rgba(255, 255, 255, 0.05), 0 20px 40px rgba(0, 0, 0, 0.5);
+            backdrop-filter: blur(10px);
+            border: 4px solid rgba(255, 255, 255, 0.8);
+        }
+
+        .clock-face {
+            position: absolute;
+            width: 100%;
+            height: 100%;
+            border-radius: 50%;
+        }
+
+        .hour-marker {
+            position: absolute;
+            width: 4px;
+            height: 40px;
+            background: linear-gradient(to bottom, rgba(255, 255, 255, 0.9), rgba(255, 255, 255, 0.6));
+            top: 10px;
+            left: 50%;
+            transform-origin: 2px 240px;
+            transform: translateX(-50%);
+            border-radius: 2px;
+            box-shadow: 0 0 10px rgba(255, 255, 255, 0.3);
+        }
+
+        .center-dot {
+            position: absolute;
+            width: 16px;
+            height: 16px;
+            background: radial-gradient(circle, #ffffff 0%, #cccccc 100%);
+            border-radius: 50%;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            box-shadow: 0 0 20px rgba(255, 255, 255, 0.5), inset 0 2px 4px rgba(0, 0, 0, 0.3);
+            z-index: 10;
+        }
+
+        .hand {
+            position: absolute;
+            left: 50%;
+            transform-origin: bottom center;
+            border-radius: 10px;
+            transition: transform 0.1s ease-out;
+        }
+
+        .hour-hand {
+            width: 6px;
+            height: 120px;
+            background: linear-gradient(to top, #8a2be2 0%, #9966cc 100%);
+            top: 130px;
+            transform: translateX(-50%);
+            box-shadow: 0 0 15px rgba(138, 43, 226, 0.6);
+            z-index: 3;
+        }
+
+        .minute-hand {
+            width: 4px;
+            height: 160px;
+            background: linear-gradient(to top, #4169e1 0%, #6495ed 100%);
+            top: 90px;
+            transform: translateX(-50%);
+            box-shadow: 0 0 12px rgba(65, 105, 225, 0.6);
+            z-index: 2;
+        }
+
+        .second-hand {
+            width: 2px;
+            height: 200px;
+            background: linear-gradient(to top, #ff4444 0%, #ff6666 100%);
+            top: 50px;
+            transform: translateX(-50%);
+            box-shadow: 0 0 10px rgba(255, 68, 68, 0.8);
+            z-index: 1;
+        }
+
+        .digital-time {
+            position: absolute;
+            top: 60%;
+            left: 50%;
+            transform: translateX(-50%);
+            text-align: center;
+            z-index: 5;
+        }
+
+        .digital-date {
+            position: absolute;
+            top: 30%;
+            left: 50%;
+            transform: translateX(-50%);
+            text-align: center;
+            z-index: 5;
+        }
+
+        .time-display {
+            font-size: 28px;
+            font-weight: bold;
+            color: #ffffff;
+            /*text-shadow: 0 0 20px rgba(255, 255, 255, 0.8), 0 0 40px rgba(255, 255, 255, 0.4);*/
+            /*letter-spacing: 2px;*/
+           /* background: rgba(0, 0, 0, 0.3);
+            padding: 8px 16px;
+            border-radius: 15px;
+            backdrop-filter: blur(5px);
+            border: 1px solid rgba(255, 255, 255, 0.2);*/
+        }
+
+        .date-display {
+            font-size: 24px;
+            font-weight: bold;
+            color: #ffffff;
+            /*text-shadow: 0 0 20px rgba(255, 255, 255, 0.8), 0 0 40px rgba(255, 255, 255, 0.4);
+            letter-spacing: 1px;
+            background: rgba(0, 0, 0, 0.3);
+            padding: 6px 12px;
+            border-radius: 12px;
+            backdrop-filter: blur(5px);
+            border: 1px solid rgba(255, 255, 255, 0.2);*/
+        }
+
+        /* Glow effect animation */
+        @keyframes glow {
+            0%, 100% {
+                box-shadow: 0 0 100px rgba(255, 255, 255, 0.1), inset 0 0 50px rgba(255, 255, 255, 0.05), 0 20px 40px rgba(0, 0, 0, 0.5);
+            }
+
+            50% {
+                box-shadow: 0 0 120px rgba(255, 255, 255, 0.15), inset 0 0 60px rgba(255, 255, 255, 0.08), 0 25px 50px rgba(0, 0, 0, 0.6);
+            }
+        }
+
+        .clock-container {
+            animation: glow 4s ease-in-out infinite;
+        }
+
+        /* Responsive design */
+        @media (max-width: 600px) {
+            .clock-container {
+                width: 350px;
+                height: 350px;
+            }
+
+            .hour-hand {
+                height: 84px;
+                top: 91px;
+            }
+
+            .minute-hand {
+                height: 112px;
+                top: 63px;
+            }
+
+            .second-hand {
+                height: 140px;
+                top: 35px;
+            }
+
+            .time-display {
+                font-size: 20px;
+            }
+
+            .date-display {
+                font-size: 16px;
+            }
+
+            .hour-marker {
+                height: 28px;
+                transform-origin: 2px 168px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="clock-container">
+        <div class="clock-face">
+            <!-- Hour markers -->
+            <div class="hour-marker" style="transform: translateX(-50%) rotate(0deg);"></div>
+            <div class="hour-marker" style="transform: translateX(-50%) rotate(30deg);"></div>
+            <div class="hour-marker" style="transform: translateX(-50%) rotate(60deg);"></div>
+            <div class="hour-marker" style="transform: translateX(-50%) rotate(90deg);"></div>
+            <div class="hour-marker" style="transform: translateX(-50%) rotate(120deg);"></div>
+            <div class="hour-marker" style="transform: translateX(-50%) rotate(150deg);"></div>
+            <div class="hour-marker" style="transform: translateX(-50%) rotate(180deg);"></div>
+            <div class="hour-marker" style="transform: translateX(-50%) rotate(210deg);"></div>
+            <div class="hour-marker" style="transform: translateX(-50%) rotate(240deg);"></div>
+            <div class="hour-marker" style="transform: translateX(-50%) rotate(270deg);"></div>
+            <div class="hour-marker" style="transform: translateX(-50%) rotate(300deg);"></div>
+            <div class="hour-marker" style="transform: translateX(-50%) rotate(330deg);"></div>
+        </div>
+
+        <!-- Clock hands -->
+        <div class="hand hour-hand" id="hourHand"></div>
+        <div class="hand minute-hand" id="minuteHand"></div>
+        <div class="hand second-hand" id="secondHand"></div>
+
+        <!-- Center dot -->
+        <div class="center-dot"></div>
+
+        <!-- Digital displays -->
+        <div class="digital-date">
+            <div class="date-display" id="dateDisplay"></div>
+        </div>
+        <div class="digital-time">
+            <div class="time-display" id="timeDisplay"></div>
+        </div>
+    </div>
+
+    <script>
+        function updateClock() {
+            const now = new Date();
+
+            // Get time components
+            const hours = now.getHours();
+            const minutes = now.getMinutes();
+            const seconds = now.getSeconds();
+
+            // Calculate angles for hands
+            const hourAngle = (hours % 12 + minutes / 60) * 30; // 30 degrees per hour
+            const minuteAngle = (minutes + seconds / 60) * 6;   // 6 degrees per minute
+            const secondAngle = seconds * 6;                    // 6 degrees per second
+
+            // Update hand positions
+            document.getElementById('hourHand').style.transform =
+                `translateX(-50%) rotate(${hourAngle}deg)`;
+            document.getElementById('minuteHand').style.transform =
+                `translateX(-50%) rotate(${minuteAngle}deg)`;
+            document.getElementById('secondHand').style.transform =
+                `translateX(-50%) rotate(${secondAngle}deg)`;
+
+            // Update digital displays
+            const timeString = now.toLocaleTimeString('da-DK', {
+                hour12: false,
+                hour: '2-digit',
+                minute: '2-digit',
+                second: '2-digit'
+            });
+
+            const dateString = now.toLocaleDateString('da-DK', {
+                day: '2-digit',
+                month: '2-digit',
+                year: 'numeric'
+            });
+
+            document.getElementById('timeDisplay').textContent = timeString;
+            document.getElementById('dateDisplay').textContent = dateString;
+        }
+
+        // Update clock immediately and then every second
+        updateClock();
+        setInterval(updateClock, 1000);
+    </script>
+</body>
+</html>
